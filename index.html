@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to Dec 31, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 1s ease;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .countdown {
+            font-size: 6em;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .label {
+            font-size: 1.5em;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .date-info {
+            font-size: 1.2em;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .countdown {
+                font-size: 4em;
+            }
+            .label {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Countdown to December 31, 2026</h1>
+        <div class="countdown" id="countdown">-</div>
+        <div class="label">Days Remaining</div>
+        <div class="date-info" id="date-info"></div>
+    </div>
+
+    <script>
+        // Target date: December 31, 2026
+        const targetDate = new Date('December 31, 2026 23:59:59').getTime();
+        
+        // Calculate the total days from now to target date initially (for reference)
+        const now = new Date().getTime();
+        const totalDaysAtStart = 724; // Approximate days from Jan 2026 to Dec 31, 2026
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            // Calculate days remaining
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            
+            // Update countdown display
+            document.getElementById('countdown').textContent = days >= 0 ? days : 0;
+            
+            // Update date info
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('date-info').textContent = `Today is ${currentDate}`;
+            
+            // Calculate gradient color based on days remaining
+            // Green when far away (many days), Red when close (few days)
+            // Using totalDaysAtStart as maximum reference
+            const percentage = days / totalDaysAtStart;
+            
+            // Clamp percentage between 0 and 1
+            const clampedPercentage = Math.max(0, Math.min(1, percentage));
+            
+            // Create gradient colors
+            // When percentage is 1 (far away): Green (0, 255, 0)
+            // When percentage is 0 (close): Red (255, 0, 0)
+            const red = Math.floor(255 * (1 - clampedPercentage));
+            const green = Math.floor(255 * clampedPercentage);
+            
+            // Create a radial gradient from center
+            const color1 = `rgb(${red}, ${green}, 0)`;
+            const color2 = `rgb(${Math.floor(red * 0.7)}, ${Math.floor(green * 0.7)}, 0)`;
+            
+            document.body.style.background = `radial-gradient(circle at center, ${color1}, ${color2})`;
+            
+            // If countdown is finished
+            if (distance < 0) {
+                document.getElementById('countdown').textContent = '0';
+                document.body.style.background = 'radial-gradient(circle at center, rgb(255, 0, 0), rgb(180, 0, 0))';
+            }
+        }
+        
+        // Update countdown immediately and then every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
