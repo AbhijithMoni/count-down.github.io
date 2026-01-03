@@ -81,9 +81,9 @@
         // Target date: December 31, 2026
         const targetDate = new Date('December 31, 2026 23:59:59').getTime();
         
-        // Calculate the total days from now to target date initially (for reference)
-        const now = new Date().getTime();
-        const totalDaysAtStart = 724; // Approximate days from Jan 2026 to Dec 31, 2026
+        // Calculate the total days from start of 2026 to target date for gradient calculation
+        const startDate = new Date('January 1, 2026 00:00:00').getTime();
+        const totalDaysAtStart = Math.floor((targetDate - startDate) / (1000 * 60 * 60 * 24));
         
         function updateCountdown() {
             const now = new Date().getTime();
@@ -107,7 +107,7 @@
             // Calculate gradient color based on days remaining
             // Green when far away (many days), Red when close (few days)
             // Using totalDaysAtStart as maximum reference
-            const percentage = days / totalDaysAtStart;
+            const percentage = totalDaysAtStart > 0 ? days / totalDaysAtStart : 0;
             
             // Clamp percentage between 0 and 1
             const clampedPercentage = Math.max(0, Math.min(1, percentage));
